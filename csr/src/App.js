@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Product } from "components/product";
+import { useEffect, useState } from "react";
+import { Product, Comment } from "components";
 import "./App.css";
 
 const API_BASE_URL = "http://localhost:9090/api";
@@ -21,22 +21,35 @@ const fetchComments = () => {
 };
 
 function App() {
-  useEffect(() => {
-    fetchComments().then((comments) => {
-      console.log("comments:", comments);
+  const [products, setProducts] = useState([]);
+  const [comments, setComments] = useState([]);
+
+  useEffect(function firstLoadProductList() {
+    fetchProduct().then((products) => {
+      setProducts([...products]);
     });
   }, []);
 
-  useEffect(() => {
-    fetchProduct().then((products) => {
-      console.log("products:", products);
+  useEffect(function firstLoadComments() {
+    fetchComments().then((comments) => {
+      setComments([...comments]);
     });
   }, []);
 
   return (
     <div className="App">
-      <div className="product">Product Area</div>
-      <div className="comment">Comment Area</div>
+      <div className="product">
+        <h2>Product Area</h2>
+        {products.map(({ id, name, price }) => (
+          <Product key={id} name={name} price={price} />
+        ))}
+      </div>
+      <div className="comment">
+        <h2>Comment Area</h2>
+        {comments.map(({ id, content }) => (
+          <Comment key={id} content={content} />
+        ))}
+      </div>
     </div>
   );
 }
